@@ -6,38 +6,61 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @SpringBootApplication
-public class FirstDataProjectApplication  implements CommandLineRunner {
+public class FirstDataProjectApplication implements CommandLineRunner {
 
-	private final CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-	public FirstDataProjectApplication(CategoryRepository categoryRepository) {
-		this.categoryRepository = categoryRepository;
-	}
+    public FirstDataProjectApplication(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(FirstDataProjectApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(FirstDataProjectApplication.class, args);
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		List<Category> categories = categoryRepository.findAll();
-		System.out.println(Objects.nonNull(categories) ? categories.toString() : "No Value");
-		List<Category> categoryList = categoryRepository.findByName("Kebabs");
-		System.out.println(Objects.nonNull(categoryList) ? categoryList.toString() : "No Value");
-		addCategory();
-	}
+    @Override
+    public void run(String... args) throws Exception {
+        List<Category> categories = categoryRepository.findAll();
+        System.out.println(Objects.nonNull(categories) ? categories.toString() : "No Value");
+        List<Category> categoryList = categoryRepository.findByName("Kebabs");
+        System.out.println(Objects.nonNull(categoryList) ? categoryList.toString() : "No Value");
+        addCategory();
+        //deleteCategory();
+        updateCategory();
+        searchDescription("Turkish");
+    }
 
-	private void addCategory(){
-		Category category=new Category();
-		category.setId(10);
-		category.setName("Doner");
-		category.setDescription("Turkish Doner");
-		Category returnValue = categoryRepository.saveAndFlush(category);
-		System.out.println(Objects.nonNull(returnValue) ? returnValue.toString() : "No Save");
-	}
+    private void searchDescription(String description) {
+        List<Category> categories = categoryRepository.findTurkishCategoriesInDescription(description);
+        System.out.println(Objects.nonNull(categories) ? categories.toString() : "No Description Value");
+    }
+
+    private void updateCategory() {
+        Category category = new Category();
+        category.setId(10);
+        category.setName("Iskender");
+        category.setDescription("Turkish Bursa-style Doner");
+        Category returnValue = categoryRepository.save(category);
+        System.out.println(Objects.nonNull(returnValue) ? returnValue.toString() : "No Updated");
+    }
+
+    private void addCategory() {
+        Category category = new Category();
+        category.setId(10);
+        category.setName("Doner");
+        category.setDescription("Turkish Doner");
+        Category returnValue = categoryRepository.saveAndFlush(category);
+        System.out.println(Objects.nonNull(returnValue) ? returnValue.toString() : "No Save");
+    }
+
+    private void deleteCategory() {
+        List<Integer> ids = new ArrayList<>();
+        ids.add(10);
+        categoryRepository.deleteAllById(ids);
+        Optional<Category> optCategory = categoryRepository.findById(10);
+        System.out.println(optCategory.isPresent() ? optCategory.get().toString() : "No data");
+    }
 }
