@@ -30,11 +30,17 @@ public class FirstDataProjectApplication implements CommandLineRunner {
         addCategory();
         //deleteCategory();
         updateCategory();
-        searchDescription("Turkish");
+        //searchDescription("Turkish");
+        searchDescriptionByNativeQuery("Turkish");
     }
 
     private void searchDescription(String description) {
         List<Category> categories = categoryRepository.findTurkishCategoriesInDescription(description);
+        System.out.println(Objects.nonNull(categories) ? categories.toString() : "No Description Value");
+    }
+
+    private void searchDescriptionByNativeQuery(String description) {
+        List<Category> categories = categoryRepository.findTurkishCategoriesInDescriptionByNativeQuery(description);
         System.out.println(Objects.nonNull(categories) ? categories.toString() : "No Description Value");
     }
 
